@@ -1,33 +1,10 @@
-Cahier des charges minimal:
-
-Fait: 
--	Création de la zone de jeu avec une taille choisie. 
--	Génération des cibles par rapport à la taille de la zone de jeu.
--	Son lorsqu'une cible est détruite
+v1.0 
+-	CrÃ©ation de la zone de jeu avec une taille choisie. 
+-	GÃ©nÃ©ration des cibles par rapport Ã  la taille de la zone de jeu.
+-	Son lorsqu'une cible est dÃ©truite
 -	Affichage de la vie
 -	Affichage du score
--	Incrémenter le score lorsqu’une cible est touchée. 
+-	IncrÃ©menter le score lorsquâ€™une cible est touchÃ©e. 
 -	Affichage du game-over.
-
-A faire:
--	Créer plusieurs version suivant la taille des écran ( voir profils de jeu )
--	Son lorsque le tir est manqué
--	Un pourcentage de précision
--	Gestion de la vie
--	Diminuer le score lorsqu’une cible est manquée. 
--	Redémarrer le jeu au game-over. 
--	Menu.
-	
-Bugs connus:
--	Le fondu ne s’affiche pas parfois
--	La cible est mal définie, lorsqu’on clique légèrement à côté le jeu détecte que la cible a été touchée. 
-
-Cahier des charges optionnel:
-
-
-A faire:
--	Gestion des malus
--	Gestion des bonus
-		- Multiplicateurs?
 
 
