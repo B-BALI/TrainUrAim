@@ -1,9 +1,8 @@
-v1.0 
+05/12/2014 - v1.0 
+***********************************************************************
 -	Création de la zone de jeu avec une taille choisie. 
 -	Génération des cibles par rapport à la taille de la zone de jeu.
 -	Son lorsqu'une cible est détruite
 -	Affichage de la vie
 -	Affichage du score
 -	Affichage du game-over.
-
-
