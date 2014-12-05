@@ -4,7 +4,6 @@ v1.0
 -	Son lorsqu'une cible est détruite
 -	Affichage de la vie
 -	Affichage du score
--	Incrémenter le score lorsqu’une cible est touchée. 
 -	Affichage du game-over.
 
 
