@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="phaser.js"></script>
+</head>
+<body>
+    <script>
+    var game = new Phaser.Game(1200, 768, Phaser.AUTO, '', {preload: preload, create: create, update: update, });
+    var score = 0;
+    var life = 3;
+    var target;
+    var tab = [];
+    var i;
+    var gameOverText;
+
+    function preload() {
+                //image de fond
+                game.load.image("background", "assets/Images/background.png");
+                //Image de la cible
+                game.load.image("target", "assets/Images/target.png");
+                //Son kill
+                game.load.audio('sfx', 'assets/Audio/Blob.ogg');
+            }
+
+            function create() {
+
+                // on crée la sprite de l'audio
+                fx = game.add.audio('sfx');
+
+                //On défini le fx
+                fx.addMarker('Hit', 0, 1);
+
+                //On charge le background
+                background = game.add.tileSprite(0, 0, 1200, 768, "background");
+                //On défini un evenement de création de cible toutes les 1 secondes. 
+                game.time.events.add(Phaser.Timer.SECOND * 1, createTarget, this);
+
+                //Affichage du score
+                scoreString = 'Score : ';
+                scoreText = game.add.text(0, 0, scoreString + score, {font: '34px Arial', fill: '#fff'});
+
+                //Affichage de la vie
+                lifeString = 'Vie : ';
+                lifeText = game.add.text(150, 0, lifeString + life, {font: '34px Arial', fill: '#fff'});
+
+                //Affichage du gameOver
+                gameOverText = game.add.text(game.world.centerX, game.world.centerY, ' ', {font: '84px Arial', fill: '#fff'});
+                gameOverText.anchor.setTo(0.5, 0.5);
+                gameOverText.visible = false;
+
+            }
+
+            function update() {
+            }
+
+
+            // Event du click
+            function listener() {
+                //On lance le son
+                fx.play('Hit',0,1 );
+                // On détruit la cible
+                this.parm1.destroy();
+
+                //On le défini a null pour etre sur qu'il ne soit plus là
+                this.parm1 = null;
+                tab[i-1] = null;
+
+                // On incrémente le score et on l'affiche
+                score += 1;
+                scoreText.text = scoreString + score;
+
+            }
+
+            function createTarget() {
+                i = 0;
+                
+                //On crée une cible
+                tab[i] = game.add.sprite(Math.floor((Math.random() * 1100)), Math.floor((Math.random() * 668)), 'target');
+                tab[i].inputEnabled = true;
+
+                //Lors du clic sur la cible
+                tab[i].events.onInputDown.add(listener, {parm1: tab[i]});
+
+                // On attent que le fondu se termine
+                var test = game.add.tween(tab[i]).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
+
+
+                i = i + 1;
+                //On appel la création d'une nouvelle cible
+                game.time.events.add(Phaser.Timer.SECOND * 1, createTarget, this);
+            }
+
+
+                //Fonction de la vie
+                
+                //     if (tab[i - 1 ]) {
+                //         tab[i-1].destroy();
+                //         vie -= 1;
+                //         vieText.text = vieString + vie;
+                //      if (vie < 1)
+                //      {
+                //         gameOverText.text = " GAME OVER \n Click to restart";
+                //         gameOverText.visible = true;
+                //     }
+                //     }
+                // });
+
+</script>
+
+</body>
+</html>
