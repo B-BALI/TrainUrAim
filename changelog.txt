@@ -1,4 +1,4 @@
-05/12/2014 - v1.0 
+﻿05/12/2014 - v1.0 
 ***********************************************************************
 -	Création de la zone de jeu avec une taille choisie. 
 -	Génération des cibles par rapport à la taille de la zone de jeu.
@@ -6,3 +6,10 @@
 -	Affichage de la vie
 -	Affichage du score
 -	Affichage du game-over.
+
+20/12/2014 - v1.1
+***********************************************************************
+-    	Redémarrer le jeu au game-over. 
+- 	Son lorsque le tir est manqué.
+- 	Un pourcentage de précision
+-	Diminuer le score lorsqu’une cible est manquée. 

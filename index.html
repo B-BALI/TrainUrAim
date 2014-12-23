@@ -16,6 +16,9 @@ and open the template in the editor.
     var game = new Phaser.Game(1200, 768, Phaser.AUTO, '', {preload: preload, create: create, update: update, });
     var score = 0;
     var life = 3;
+    var accuracyIn = 0;
+    var accuracyTotal = 0;
+    var accuracy = 100;
     var target;
     var tab = [];
     var i;
@@ -28,6 +31,8 @@ and open the template in the editor.
                 game.load.image("target", "assets/Images/target.png");
                 //Son kill
                 game.load.audio('sfx', 'assets/Audio/Blob.ogg');
+                //Son Miss
+                game.load.audio('mfx', 'assets/Audio/Pew.ogg');
             }
 
             function create() {
@@ -38,9 +43,19 @@ and open the template in the editor.
                 //On défini le fx
                 fx.addMarker('Hit', 0, 1);
 
+                   // on crée la sprite de l'audio
+                mfx = game.add.audio('mfx');
+
+                //On défini le fx
+                mfx.addMarker('Miss', 0, 1);
+
                 //On charge le background
                 background = game.add.tileSprite(0, 0, 1200, 768, "background");
-                //On défini un evenement de création de cible toutes les 1 secondes. 
+                
+                background.inputEnabled = true;
+                background.events.onInputDown.add(listenerOut);
+
+                //On défini un evenement de création de cible toutes les 1 secondes.
                 game.time.events.add(Phaser.Timer.SECOND * 1, createTarget, this);
 
                 //Affichage du score
@@ -49,12 +64,25 @@ and open the template in the editor.
 
                 //Affichage de la vie
                 lifeString = 'Vie : ';
-                lifeText = game.add.text(150, 0, lifeString + life, {font: '34px Arial', fill: '#fff'});
+                lifeText = game.add.text(250, 0, lifeString + life, {font: '34px Arial', fill: '#fff'});
+
+                 //Affichage du pourcentage de précision
+                accuracyString = 'Precision : ';
+                accuracyText = game.add.text(500, 0, accuracyString + accuracy, {font: '34px Arial', fill: '#fff'});
 
                 //Affichage du gameOver
                 gameOverText = game.add.text(game.world.centerX, game.world.centerY, ' ', {font: '84px Arial', fill: '#fff'});
                 gameOverText.anchor.setTo(0.5, 0.5);
                 gameOverText.visible = false;
+               
+
+                     if (life < 1)
+                     {
+                        gameOverText.text = " GAME OVER \n Click to restart";
+                        gameOverText.visible = true;
+                        game.input.onTap.addOnce(restart,this)
+                    }
+                    
 
             }
 
@@ -68,15 +96,25 @@ and open the template in the editor.
                 fx.play('Hit',0,1 );
                 // On détruit la cible
                 this.parm1.destroy();
-
                 //On le défini a null pour etre sur qu'il ne soit plus là
                 this.parm1 = null;
                 tab[i-1] = null;
-
                 // On incrémente le score et on l'affiche
                 score += 1;
                 scoreText.text = scoreString + score;
+                accuracyIn += 1;
+                accuracyTotal += 1;
+                accuracyText.text = accuracyString + accuracy.toFixed(1);
+                accuracy = (accuracyIn / accuracyTotal) * 100;
+            }
 
+             function listenerOut() {
+               mfx.play('Miss',0,1 );
+               score -= 1;
+               scoreText.text = scoreString + score;
+               accuracyTotal += 1;
+               accuracy = (accuracyIn / accuracyTotal) * 100;
+               accuracyText.text = accuracyString + accuracy.toFixed(1);
             }
 
             function createTarget() {
@@ -91,13 +129,21 @@ and open the template in the editor.
 
                 // On attent que le fondu se termine
                 var test = game.add.tween(tab[i]).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
-
-
                 i = i + 1;
+
                 //On appel la création d'une nouvelle cible
-                game.time.events.add(Phaser.Timer.SECOND * 1, createTarget, this);
+                game.time.events.add(Phaser.Timer.SECOND * 0.5, createTarget, this);
             }
 
+            function restart () {
+                   accuracyIn = 0;
+                   accuracyTotal = 0;
+                   accuracy = 100;
+                  life = 3;
+                  lifeText.text = lifeString + life;
+                  score = 0;
+                 gameOverText.visible = false;
+            }
 
                 //Fonction de la vie
                 
