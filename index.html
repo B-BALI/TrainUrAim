@@ -1,152 +1,259 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
+
 <html>
 <head>
-    <title>TODO supply a title</title>
+    <title>TrainUrAim</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" src="phaser.js"></script>
+    <link rel="stylesheet"  href="assets/style/style.css">
 </head>
 <body>
-    <script>
-    var game = new Phaser.Game(1200, 768, Phaser.AUTO, '', {preload: preload, create: create, update: update, });
-    var score = 0;
-    var life = 3;
-    var accuracyIn = 0;
-    var accuracyTotal = 0;
-    var accuracy = 100;
-    var target;
-    var tab = [];
-    var i;
-    var gameOverText;
+    <div class="header">
+        <nav>
+            <ul class="menu">
+              <h1>TrainUrAim</h1>
+                <li>Accueil</li>
+                <li id="600" onclick="resize(this)">600*400</li>
+                <li id="768" onclick="resize(this)">768*476</li>
+                <li id="1024" onclick="resize(this)">1024*650</li>
+                <li id="1280" onclick="resize(this)">1280*768</li>
+                <li id="1600" onclick="resize(this)">1600*900</li>
+                <li id="1920" onclick="resize(this)">1920*1080</li>
+            </ul>
+        </nav>
+    </div>
+    <div class="Game" id="Game">
+        <script>
+        var heightGame = 768;
+        var widthGame = 1280;
+        game = new Phaser.Game(widthGame, heightGame, Phaser.CANVAS, '', {preload: preload, create: create, update: update});
+        var score = 0;
+        var life = 3;
+        var time = 60;
+        var accuracyIn = 0;
+        var accuracyTotal = 0;
+        var accuracy = 0;
+        var combo = 1;
+        var i;
+        var gameOverText;
+        var target = null;
+        
 
-    function preload() {
-                //image de fond
-                game.load.image("background", "assets/Images/background.png");
-                //Image de la cible
-                game.load.image("target", "assets/Images/target.png");
-                //Son kill
-                game.load.audio('sfx', 'assets/Audio/Blob.ogg');
-                //Son Miss
-                game.load.audio('mfx', 'assets/Audio/Pew.ogg');
-            }
 
-            function create() {
+        function preload() {
+                    //image de fond
+                    game.load.image("background", "assets/Images/background.png");
+                    //Image de la cible
+                    game.load.image("target", "assets/Images/target.png");
 
-                // on crée la sprite de l'audio
-                fx = game.add.audio('sfx');
+                    game.load.image("bullet", "assets/Images/bullet.png");
+                    //Son kill
+                    game.load.audio('sfx', 'assets/Audio/Blob.ogg');
+                    //Son Miss
+                    game.load.audio('mfx', 'assets/Audio/Pew.ogg');
 
-                //On défini le fx
-                fx.addMarker('Hit', 0, 1);
+                }
 
-                   // on crée la sprite de l'audio
-                mfx = game.add.audio('mfx');
+                function create() {
 
-                //On défini le fx
-                mfx.addMarker('Miss', 0, 1);
 
-                //On charge le background
-                background = game.add.tileSprite(0, 0, 1200, 768, "background");
-                
-                background.inputEnabled = true;
-                background.events.onInputDown.add(listenerOut);
+                    // on crée la sprite de l'audio
+                    fx = game.add.audio('sfx');
 
-                //On défini un evenement de création de cible toutes les 1 secondes.
-                game.time.events.add(Phaser.Timer.SECOND * 1, createTarget, this);
+                    //On défini le fx
+                    fx.addMarker('Hit', 0, 1);
 
-                //Affichage du score
-                scoreString = 'Score : ';
-                scoreText = game.add.text(0, 0, scoreString + score, {font: '34px Arial', fill: '#fff'});
+                    // on crée la sprite de l'audio
+                    mfx = game.add.audio('mfx');
 
-                //Affichage de la vie
-                lifeString = 'Vie : ';
-                lifeText = game.add.text(250, 0, lifeString + life, {font: '34px Arial', fill: '#fff'});
+                    //On défini le fx
+                    mfx.addMarker('Miss', 0, 1);
 
-                 //Affichage du pourcentage de précision
-                accuracyString = 'Precision : ';
-                accuracyText = game.add.text(500, 0, accuracyString + accuracy, {font: '34px Arial', fill: '#fff'});
+                    //On charge le background
+                    background = game.add.tileSprite(0, 0, widthGame, heightGame, "background");
 
-                //Affichage du gameOver
-                gameOverText = game.add.text(game.world.centerX, game.world.centerY, ' ', {font: '84px Arial', fill: '#fff'});
-                gameOverText.anchor.setTo(0.5, 0.5);
-                gameOverText.visible = false;
-               
+                    background.inputEnabled = true;
+                    background.events.onInputDown.add(listenerOut);
 
-                     if (life < 1)
-                     {
+                    createTargetOne();
+                    createTargetTwo();
+
+                    //Affichage du score
+                    scoreString = 'SCORE: ';
+                    scoreText = game.add.text(0, 0, scoreString + score, {font: '30px Impact', fill: 'white'});
+
+                    //Affichage de la vie
+                    // lifeString = 'Vie : ';
+                    //  lifeText = game.add.text(250, 0, lifeString + life, {font: '34px Arial', fill: '#fff'});
+
+                    //Affichage du pourcentage de précision
+                    accuracyString = 'ACC: ';
+                    accuracyText = game.add.text(180, 0, accuracyString + accuracy, {font: '30px Impact', fill: 'white'});
+
+                    comboString = 'COMBO: ';
+                    comboText = game.add.text(320, 0, comboString + ' x' + combo, {font: '30px Impact', fill: 'white'});
+
+
+                    timeString = 'TIME: ';
+                    timeText = game.add.text(500, 0, timeString + time, {font: '30px Impact', fill: 'white'});
+
+                    //Affichage du gameOver
+                    gameOverText = game.add.text(game.world.centerX, game.world.centerY, ' ', {font: '84px Impact', fill: '#C73929'});
+                    gameOverText.anchor.setTo(0.5, 0.5);
+                    gameOverText.visible = false;
+                    
+                    emitter = game.add.emitter(0, 0, 100);
+                    emitter.gravity = 0;
+
+                    emitter.makeParticles('bullet');
+
+                    game.input.onDown.add(particleBurst, this);
+
+                    if (life < 1)
+                    {
                         gameOverText.text = " GAME OVER \n Click to restart";
                         gameOverText.visible = true;
-                        game.input.onTap.addOnce(restart,this)
+                        game.input.onTap.addOnce(restart, this);
                     }
-                    
 
-            }
+                }
 
-            function update() {
-            }
+                function update() {
+                }
 
 
-            // Event du click
-            function listener() {
-                //On lance le son
-                fx.play('Hit',0,1 );
-                // On détruit la cible
-                this.parm1.destroy();
-                //On le défini a null pour etre sur qu'il ne soit plus là
-                this.parm1 = null;
-                tab[i-1] = null;
-                // On incrémente le score et on l'affiche
-                score += 1;
+                // Event du click
+                function listenerTargetOne() {
+                   fx.play('Hit', 0, 1);
+                   this.target.destroy();
+                   createTargetOne();
+                   score += (1 * combo);
+                   scoreText.text = scoreString + score;
+                   accuracyIn += 1;
+                   accuracyTotal += 1;
+                   accuracyText.text = accuracyString + accuracy.toFixed(1);
+                   comboText.text = comboString + ' x' + (combo += 1);
+                   accuracy = (accuracyIn / accuracyTotal) * 100;
+               }
+
+               function listenerTargetTwo() {
+                fx.play('Hit', 0, 1);
+                this.target.destroy();
+                createTargetTwo();
+                score += (1 * combo);
                 scoreText.text = scoreString + score;
                 accuracyIn += 1;
                 accuracyTotal += 1;
                 accuracyText.text = accuracyString + accuracy.toFixed(1);
+                comboText.text = comboString + ' x' + (combo += 1);
                 accuracy = (accuracyIn / accuracyTotal) * 100;
             }
 
-             function listenerOut() {
-               mfx.play('Miss',0,1 );
-               score -= 1;
-               scoreText.text = scoreString + score;
-               accuracyTotal += 1;
-               accuracy = (accuracyIn / accuracyTotal) * 100;
-               accuracyText.text = accuracyString + accuracy.toFixed(1);
+            function listenerOut() {
+                combo = 1;
+                comboText.text = comboString + ' x' + combo;
+                mfx.play('Miss', 0, 1);
+                score -= 1;
+                scoreText.text = scoreString + score;
+                accuracyTotal += 1;
+                accuracy = (accuracyIn / accuracyTotal) * 100;
+                accuracyText.text = accuracyString + accuracy.toFixed(1);
+
             }
 
-            function createTarget() {
-                i = 0;
-                
-                //On crée une cible
-                tab[i] = game.add.sprite(Math.floor((Math.random() * 1100)), Math.floor((Math.random() * 668)), 'target');
-                tab[i].inputEnabled = true;
-
-                //Lors du clic sur la cible
-                tab[i].events.onInputDown.add(listener, {parm1: tab[i]});
-
-                // On attent que le fondu se termine
-                var test = game.add.tween(tab[i]).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
-                i = i + 1;
-
-                //On appel la création d'une nouvelle cible
-                game.time.events.add(Phaser.Timer.SECOND * 0.5, createTarget, this);
+            function createTargetOne() {
+                var target = game.add.sprite(Math.floor((Math.random() * (widthGame - 100))), Math.floor((Math.random() * (heightGame - 100))), 'target');
+                scale = game.rnd.realInRange(1 * (widthGame / 1400), 1 * (widthGame / 1400));
+                target.scale.x = scale;
+                target.scale.y = scale;
+                target.inputEnabled = true;
+                target.events.onInputDown.add(listenerTargetOne, {target: target});
             }
 
-            function restart () {
-                   accuracyIn = 0;
-                   accuracyTotal = 0;
-                   accuracy = 100;
-                  life = 3;
-                  lifeText.text = lifeString + life;
-                  score = 0;
-                 gameOverText.visible = false;
+            function createTargetTwo() {
+                var target = game.add.sprite(Math.floor((Math.random() * (widthGame - 100))), Math.floor((Math.random() * (heightGame - 100))), 'target');
+                scale = game.rnd.realInRange(1 * (widthGame / 1400), 1 * (widthGame / 1400));
+                target.scale.x = scale;
+                target.scale.y = scale;
+                target.inputEnabled = true;
+                target.events.onInputDown.add(listenerTargetTwo, {target: target});
             }
+
+            function restart() {
+                accuracyIn = 0;
+                accuracyTotal = 0;
+                accuracy = 100;
+                life = 3;
+                lifeText.text = lifeString + life;
+                score = 0;
+                gameOverText.visible = false;
+            }
+
+            function resize(clicked_id)
+            {
+
+                    // Ajouter //
+                    var accuracyTotal = 0;
+                    var accuracy = 0;
+                    var combo = 1;
+
+					var id = clicked_id.id;
+                    if (id == 600)
+                    {			                   
+                        widthGame = 600;
+                        heightGame = 400;
+                    }
+                    if (id == 768)
+                    {
+                        widthGame = 768;
+                        heightGame = 576;
+                    }
+                    if (id == 1024)
+                    {
+                        widthGame = 1024;
+                        heightGame = 650;
+                    }
+
+                    if (id == 1280)
+                    {
+                        widthGame = 1280;
+                        heightGame = 768;
+                    }
+
+                    if (id == 1600)
+                    {
+                        widthGame = 1600;
+                        heightGame = 900;
+                    }
+                    if (id == 1920)
+                    {
+                        widthGame = 1920;
+                        heightGame = 1080;
+                        
+                    }
+					game.renderer.resize(Number(widthGame), Number(heightGame));
+					game.destroy();
+					game = new Phaser.Game(widthGame, heightGame, Phaser.CANVAS, '', {preload: preload, create: create, update: update});
+        document.getElementById("Game").style.marginLeft = 2;
+
+    }
+
+    function particleBurst(pointer) {
+
+                    //  Position the emitter where the mouse/touch event was
+                    emitter.x = pointer.x;
+                    emitter.y = pointer.y;
+                    emitter.minRotation = 0;
+                    emitter.maxRotation = 0;
+                    emitter.minParticleSpeed.setTo(0, 0);
+                    emitter.maxParticleSpeed.setTo(0, 0);
+                    emitter.start(true, 300, null, 1);
+
+                }
 
                 //Fonction de la vie
-                
+
                 //     if (tab[i - 1 ]) {
                 //         tab[i-1].destroy();
                 //         vie -= 1;
@@ -160,6 +267,6 @@ and open the template in the editor.
                 // });
 
 </script>
-
+</div>
 </body>
 </html>
