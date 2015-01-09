@@ -13,8 +13,17 @@
 
 06/01/2015 v1.2
 ***********************************************************************
--   	Ajout d'un menu pour le Changement de résolution.
--       Cible qui s'adapte à la résolution du jeu .
+-   Ajout d'un menu pour le Changement de résolution.
+-   Cible qui s'adapte à la résolution du jeu.
 - 	Impact lors du clique.
 -	Ajout d'un multiplicateur de point (combo). 
--       Amélioration global du design du jeux. 
+-   Amélioration global du design du jeux. 
+
+09/01/2015 v1.3
+***********************************************************************
+-   Ajout du game over.
+-   Ajout d'un timer de 60 secondes.
+- 	Ajout d'un message pour le lancement du jeux.
+-	Ajout de la fonction restart. 
+-   Centrage de la zone de jeux par rapport à la résolution.
+- 	Optimisation du jeux (WEBGl -> CANVAS) pour corriger les lag connus.
